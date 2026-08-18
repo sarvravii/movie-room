@@ -1,0 +1,36 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: movieroom_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: movieroom
+      POSTGRES_PASSWORD: movieroom
+      POSTGRES_DB: movieroom
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U movieroom -d movieroom"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7
+    container_name: movieroom_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  redis_data:
